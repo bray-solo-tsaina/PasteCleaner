@@ -4,7 +4,7 @@ Strip the gutter and padding from terminal output you've copied, so you can past
 
 ## The problem
 
-Modern TUIs (Claude Code, Codex CLI, lazygit, k9s, some git views) render messages inside a bordered panel with a vertical gutter glyph on the left. When you select + copy that text, you get:
+Modern terminal agents and TUIs render output inside a bordered panel with a vertical gutter glyph on the left. This shows up in Claude Code, Codex CLI, Aider, Cursor's agent chat, Goose, Plandex, lazygit, k9s, and most `git log --graph` views. When you select + copy that text, you get:
 
 - the gutter character (`▎`, `│`, `┃`, etc.) on every line
 - leading whitespace to indent past the gutter
@@ -55,9 +55,9 @@ cat output.log | pastecleaner      # stdin
 
 ### Flags
 
-- `-c, --clipboard` — read from clipboard, write back to clipboard (macOS; uses `pbpaste`/`pbcopy`)
-- `-i, --in-place` — rewrite the input file
-- `--unwrap` / `--no-unwrap` — force paragraph unwrapping on or off. Default is auto: on when a gutter is detected, off otherwise.
+- `-c, --clipboard`: read from the clipboard, write back to the clipboard (macOS; uses `pbpaste`/`pbcopy`)
+- `-i, --in-place`: rewrite the input file
+- `--unwrap` / `--no-unwrap`: force paragraph unwrapping on or off. Default is auto: on when a gutter is detected, off otherwise.
 
 ### Supported gutter glyphs
 
@@ -65,7 +65,7 @@ Any of these are recognized as a left gutter and stripped: `▎ │ ┃ ▏ ▌ 
 
 ## Running automatically
 
-Three ways to avoid remembering to run `pastecleaner -c` yourself. Pick whichever matches your workflow — they're all optional; the manual CLI works fine on its own.
+Four ways to avoid remembering to run `pastecleaner -c` yourself. Pick whichever matches your workflow. They're all optional; the manual CLI works fine on its own.
 
 ### 1. Clipboard-watcher daemon (macOS, recommended)
 
@@ -96,7 +96,7 @@ launchctl unload ~/Library/LaunchAgents/com.pastecleaner.watch.plist
 rm ~/Library/LaunchAgents/com.pastecleaner.watch.plist
 ```
 
-The daemon only rewrites the clipboard when it sees one of the supported gutter glyphs — normal copy/paste is untouched.
+The daemon only rewrites the clipboard when it sees one of the supported gutter glyphs; normal copy/paste is untouched.
 
 ### 2. Hotkey (one keypress)
 
@@ -108,7 +108,7 @@ Bind `pbpaste | pastecleaner | pbcopy` to a shortcut in:
 
 Then: copy as usual, tap your hotkey, paste.
 
-### 3. Claude Code slash command
+### 3. Slash command (Claude Code example)
 
 Drop this in `~/.claude/commands/clean.md` to invoke from Claude Code via `/clean`:
 
@@ -120,7 +120,9 @@ description: Clean the clipboard of terminal gutter/padding
 Run `pastecleaner -c` in the shell.
 ```
 
-### 4. Claude Code Stop hook (caveat)
+Adaptable to any agent that can register a shell-invoking command. Aider's `/commands`, Codex CLI's tool hooks, and Cursor's custom agent commands all work similarly: have the command shell out to `pastecleaner -c`.
+
+### 4. Post-response hook (Claude Code example, caveat)
 
 You can wire a hook into `~/.claude/settings.json` to run `pastecleaner -c` after every response:
 
@@ -136,6 +138,8 @@ You can wire a hook into `~/.claude/settings.json` to run `pastecleaner -c` afte
 
 Caveat: the hook fires when Claude *finishes* its response, before you've had a chance to select and copy text. It only helps if you habitually copy *during* Claude's output (e.g. from a long reply) and paste afterwards. For anything else, the watcher daemon (option 1) is a better fit.
 
+The same idea works with any agent that exposes a post-response or idle hook; the watcher daemon (option 1) is a catch-all that needs no agent support at all.
+
 ## Development
 
 ```
@@ -148,4 +152,4 @@ pytest
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT. See [LICENSE](./LICENSE).

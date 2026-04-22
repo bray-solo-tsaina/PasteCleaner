@@ -128,7 +128,7 @@ def main(argv: list[str] | None = None) -> int:
         "--unwrap",
         action=argparse.BooleanOptionalAction,
         default=None,
-        help="Force paragraph unwrapping on/off. Default: auto — on when a ▎ gutter is detected.",
+        help="Force paragraph unwrapping on/off. Default: auto (on when a ▎ gutter is detected).",
     )
     args = parser.parse_args(argv)
 
