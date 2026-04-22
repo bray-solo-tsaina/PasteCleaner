@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pastecleaner"
+version = "0.1.0"
+description = "Strip the gutter and padding from terminal output you've copied, so you can paste it cleanly."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "Brayden Delorey", email = "braydenpdelorey@gmail.com" }]
+keywords = ["terminal", "clipboard", "claude-code", "tui", "text", "cli"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Text Processing :: Filters",
+    "Topic :: Utilities",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/bray-solo-tsaina/pastecleaner"
+Issues = "https://github.com/bray-solo-tsaina/pastecleaner/issues"
+
+[project.scripts]
+pastecleaner = "pastecleaner.cli:main"

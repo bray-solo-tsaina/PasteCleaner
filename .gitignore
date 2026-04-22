@@ -1,0 +1,28 @@
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# pipx / hatch build artefacts
+.hatch/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
