@@ -63,7 +63,52 @@ cat output.log | pastecleaner      # stdin
 
 Any of these are recognized as a left gutter and stripped: `▎ │ ┃ ▏ ▌ ▍ ▐`. If none of them appear in the input, `pastecleaner` just trims trailing whitespace and leaves structure alone.
 
-### Claude Code slash command (optional)
+## Running automatically
+
+Three ways to avoid remembering to run `pastecleaner -c` yourself. Pick whichever matches your workflow — they're all optional; the manual CLI works fine on its own.
+
+### 1. Clipboard-watcher daemon (macOS, recommended)
+
+A tiny background process that polls the pasteboard and auto-cleans any content containing a gutter glyph. Runs at login, works across every app and terminal, zero keypresses.
+
+Install:
+
+```
+pipx install pastecleaner                 # provides both `pastecleaner` and `pastecleaner-watch`
+mkdir -p ~/Library/LaunchAgents
+sed "s|__PASTECLEANER_WATCH_PATH__|$(which pastecleaner-watch)|" \
+  contrib/com.pastecleaner.watch.plist \
+  > ~/Library/LaunchAgents/com.pastecleaner.watch.plist
+launchctl load ~/Library/LaunchAgents/com.pastecleaner.watch.plist
+```
+
+Check it's running:
+
+```
+launchctl list | grep pastecleaner
+tail -f /tmp/pastecleaner-watch.log /tmp/pastecleaner-watch.err
+```
+
+Uninstall:
+
+```
+launchctl unload ~/Library/LaunchAgents/com.pastecleaner.watch.plist
+rm ~/Library/LaunchAgents/com.pastecleaner.watch.plist
+```
+
+The daemon only rewrites the clipboard when it sees one of the supported gutter glyphs — normal copy/paste is untouched.
+
+### 2. Hotkey (one keypress)
+
+Bind `pbpaste | pastecleaner | pbcopy` to a shortcut in:
+
+- **Raycast**: *Create Script Command → Shell Script*, paste the pipeline, assign a hotkey.
+- **Alfred**: *Workflow → Hotkey → Run Script*, same pipeline.
+- **macOS Shortcuts app** (built-in): *New Shortcut → Run Shell Script*, pick a keyboard shortcut in the shortcut's settings.
+
+Then: copy as usual, tap your hotkey, paste.
+
+### 3. Claude Code slash command
 
 Drop this in `~/.claude/commands/clean.md` to invoke from Claude Code via `/clean`:
 
@@ -74,6 +119,22 @@ description: Clean the clipboard of terminal gutter/padding
 
 Run `pastecleaner -c` in the shell.
 ```
+
+### 4. Claude Code Stop hook (caveat)
+
+You can wire a hook into `~/.claude/settings.json` to run `pastecleaner -c` after every response:
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      { "hooks": [{ "type": "command", "command": "pastecleaner -c" }] }
+    ]
+  }
+}
+```
+
+Caveat: the hook fires when Claude *finishes* its response, before you've had a chance to select and copy text. It only helps if you habitually copy *during* Claude's output (e.g. from a long reply) and paste afterwards. For anything else, the watcher daemon (option 1) is a better fit.
 
 ## Development
 
