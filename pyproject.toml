@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pastecleaner"
-version = "0.2.0"
+version = "0.2.1"
 description = "Strip the gutter and padding from terminal output you've copied, so you can paste it cleanly."
 readme = "README.md"
 license = { file = "LICENSE" }

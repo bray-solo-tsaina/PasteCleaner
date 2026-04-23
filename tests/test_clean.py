@@ -96,3 +96,22 @@ def test_blank_line_before_list_keeps_blank():
     src = "▎ intro paragraph\n  ▎\n  ▎ - bullet one\n  ▎ - bullet two\n"
     out = clean(src)
     assert out == "intro paragraph\n\n- bullet one\n- bullet two\n"
+
+
+def test_tree_output_passes_through_unmodified():
+    # `tree` uses Unicode box-drawing chars internally but most lines don't
+    # begin with a gutter glyph, so majority rule says "not a panel".
+    tree_output = (
+        "src/\n"
+        "├── a.py\n"
+        "│   └── module.py\n"
+        "└── b.py\n"
+    )
+    assert clean(tree_output) == tree_output
+
+
+def test_minority_gutter_lines_do_not_trigger_cleaning():
+    # 1 of 3 non-blank lines starts with a gutter -> keep structure as-is,
+    # including that incidental gutter char.
+    src = "regular one\n▎ lone gutter line\nregular three\n"
+    assert clean(src) == src

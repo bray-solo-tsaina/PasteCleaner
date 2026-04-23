@@ -14,7 +14,7 @@ import subprocess
 import sys
 import time
 
-from pastecleaner.cli import GUTTER_CHARS, clean
+from pastecleaner.cli import GUTTER_CHARS, _is_bordered, clean
 
 POLL_INTERVAL_SEC = 0.5
 
@@ -48,8 +48,14 @@ def render_plist() -> str:
 
 
 def has_gutter(text: str) -> bool:
-    """Return True if any of the recognized gutter glyphs appear in text."""
-    return any(ch in text for ch in GUTTER_CHARS)
+    """Return True if the text looks like bordered TUI output worth cleaning.
+
+    Uses the same majority rule as the CLI (`_is_bordered`) so that a lone
+    box-drawing character in tree or graph output does not trigger the
+    daemon. Only flips to True when the gutter glyph appears at line-start
+    on more than half of the non-blank lines.
+    """
+    return _is_bordered(text.splitlines())
 
 
 def _pbpaste() -> str:

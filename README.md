@@ -86,7 +86,7 @@ cat output.log | pastecleaner      # stdin
 
 ### Supported gutter glyphs
 
-Any of these are recognized as a left gutter and stripped: `▎ │ ┃ ▏ ▌ ▍ ▐`. If none of them appear in the input, `pastecleaner` just trims trailing whitespace and leaves structure alone.
+Any of these are recognized as a left gutter and stripped: `▎ │ ┃ ▏ ▌ ▍ ▐`. Detection uses a majority rule: more than half of the non-blank lines must begin with one of these glyphs. This way, incidental box-drawing characters in `tree`, `git log --graph`, and similar output pass through untouched. If no gutter pattern is detected, `pastecleaner` just trims trailing whitespace and leaves structure alone.
 
 ## Running automatically
 

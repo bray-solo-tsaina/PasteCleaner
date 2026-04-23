@@ -27,14 +27,32 @@ def _strip_gutter(line: str) -> str:
     return GUTTER_RE.sub("", line)
 
 
+def _is_bordered(raw_lines: list[str]) -> bool:
+    """Return True when the input looks like bordered TUI output.
+
+    Majority rule: more than half of the non-blank lines must begin with a
+    gutter glyph (optionally after leading whitespace). This avoids firing
+    on incidental box-drawing characters, e.g. the internal ``│`` in
+    ``tree`` output where only a few lines start with that glyph.
+    """
+    non_blank = [l for l in raw_lines if l.strip()]
+    if not non_blank:
+        return False
+    matches = sum(1 for l in non_blank if GUTTER_RE.match(l))
+    return matches * 2 > len(non_blank)
+
+
 def clean(text: str, unwrap: bool | None = None) -> str:
     raw_lines = text.splitlines()
-    had_gutter = any(GUTTER_RE.match(line) for line in raw_lines)
+    bordered = _is_bordered(raw_lines)
 
-    lines = [_strip_gutter(line).rstrip() for line in raw_lines]
+    if bordered:
+        lines = [_strip_gutter(line).rstrip() for line in raw_lines]
+    else:
+        lines = [line.rstrip() for line in raw_lines]
 
     if unwrap is None:
-        unwrap = had_gutter
+        unwrap = bordered
 
     if not unwrap:
         return "\n".join(lines).strip("\n") + "\n"
