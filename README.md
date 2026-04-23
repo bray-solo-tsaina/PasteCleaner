@@ -74,11 +74,9 @@ A tiny background process that polls the pasteboard and auto-cleans any content 
 Install:
 
 ```
-pipx install pastecleaner                 # provides both `pastecleaner` and `pastecleaner-watch`
+pipx install pastecleaner        # provides both `pastecleaner` and `pastecleaner-watch`
 mkdir -p ~/Library/LaunchAgents
-sed "s|__PASTECLEANER_WATCH_PATH__|$(which pastecleaner-watch)|" \
-  contrib/com.pastecleaner.watch.plist \
-  > ~/Library/LaunchAgents/com.pastecleaner.watch.plist
+pastecleaner-watch --print-plist > ~/Library/LaunchAgents/com.pastecleaner.watch.plist
 launchctl load ~/Library/LaunchAgents/com.pastecleaner.watch.plist
 ```
 

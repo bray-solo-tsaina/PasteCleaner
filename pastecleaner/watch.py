@@ -7,6 +7,8 @@ template.
 """
 from __future__ import annotations
 
+import os
+import shutil
 import signal
 import subprocess
 import sys
@@ -15,6 +17,34 @@ import time
 from pastecleaner.cli import GUTTER_CHARS, clean
 
 POLL_INTERVAL_SEC = 0.5
+
+PLIST_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.pastecleaner.watch</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>{binary_path}</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/pastecleaner-watch.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/pastecleaner-watch.err</string>
+</dict>
+</plist>
+"""
+
+
+def render_plist() -> str:
+    binary_path = shutil.which("pastecleaner-watch") or sys.argv[0]
+    binary_path = os.path.abspath(binary_path)
+    return PLIST_TEMPLATE.format(binary_path=binary_path)
 
 
 def has_gutter(text: str) -> bool:
@@ -39,6 +69,12 @@ def _install_signal_handlers() -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    if argv is None:
+        argv = sys.argv[1:]
+    if argv and argv[0] in ("--print-plist", "plist"):
+        sys.stdout.write(render_plist())
+        return 0
+
     _install_signal_handlers()
 
     last_seen = ""
