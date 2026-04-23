@@ -43,6 +43,18 @@ git clone https://github.com/bray-solo-tsaina/pastecleaner
 pipx install ./pastecleaner
 ```
 
+## Quickstart
+
+The everyday workflow is three steps:
+
+1. Copy some text from your terminal (select, then ⌘C).
+2. Run `pastecleaner -c` in any shell.
+3. Paste wherever you need it (⌘V).
+
+That's it. `pastecleaner -c` reads the clipboard, strips the gutter and padding, and writes the cleaned version back. Your next paste is ready to go.
+
+If you'd rather never type the command, see [Running automatically](#running-automatically) for ways to skip step 2 entirely.
+
 ## Usage
 
 ```
