@@ -43,6 +43,19 @@ git clone https://github.com/bray-solo-tsaina/pastecleaner
 pipx install ./pastecleaner
 ```
 
+## Updating
+
+```
+pipx upgrade pastecleaner
+```
+
+If you have the watcher daemon running (option 1 under "Running automatically"), restart it so it picks up the new binary:
+
+```
+launchctl unload ~/Library/LaunchAgents/com.pastecleaner.watch.plist
+launchctl load ~/Library/LaunchAgents/com.pastecleaner.watch.plist
+```
+
 ## Quickstart
 
 The everyday workflow is three steps:
@@ -107,6 +120,8 @@ rm ~/Library/LaunchAgents/com.pastecleaner.watch.plist
 ```
 
 The daemon only rewrites the clipboard when it sees one of the supported gutter glyphs; normal copy/paste is untouched.
+
+**Latency note**: the daemon polls the pasteboard every 500ms. For the usual copy, switch apps, paste flow this is invisible. If you copy and paste within a single keystroke (rare), you may beat the daemon and get the raw gutter'd version; wait half a beat or fall back to manual `pastecleaner -c`.
 
 ### 2. Hotkey (one keypress)
 
